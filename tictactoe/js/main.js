@@ -1,17 +1,17 @@
 var isOver = false; // see whether game is ended
 var size = 3; //3x3 grid default
 var turns = 0;
-
-
+var token1 = 'student'
+var token2 = 'fu'
 var board;
 const tokens = {
   EMPTY: ' ',
-  X: 'X',
-  O: 'O',
+  X: 'fu',
+  O: 'student',
   MINMAX: 'MN'
 }
 
-function intializeBoard(){
+function initializeBoard(){
   board = new Array(size);
   for(var i = 0; i < board.length; i++){
     board[i] = new Array(size);
@@ -20,69 +20,80 @@ function intializeBoard(){
 }
 
 
-
-$("td").on("click", function() {
-  if (isOver) {
-    return;
-  } // if game is ended, clicks become invalid
-
-
-
-  var marked = $(this); // get the square that player selects
-  // classes x and o
-  if (marked.hasClass(token1) || marked.hasClass(token2)) {
-    // if the square has already been selected then alert else markes the square
-    alert("Please choose another square!")
-    return;
-  }
-
-  // first see which turn
-  if (turns % 2 === 0) {
-
-    $("#message").text("It's Player's turn!") // change the prompt message
-
-    marked.addClass(token1).addClass("animated bounceIn"); // place the token "X"
-
-    turns++; //player2's turn
-
-    if (  ) {
-      $("#message").text("Player wins!")
-      isOver = true; // game is ended
-      $("#player1 .num").text('' + );
-
-    } else {
-
-      if ( turns === size ** 2 ) {
-        $("#message").text("It's a draw!")
-        isOver = true;
-        return;
-      } // players reach the last turn and not winning, it's a draw
-      // $("#player2 .name").addClass("changecolor");
-      // $("#player1 .name").removeClass("changecolor"); // change color to indicate current player
-      $("#message").text("It's Player2's turn!")
-      //normally switch to player O and change prompt message
-    }
-
-
-    if ( //computer wins ) {
-      $("#message").text("Computer wins!")
-      isOver = true;
-
-    } else {
-
-      if ( turns === size ** 2 ) {
-        $("#message").text("It's a draw!")
-        isOver = true;
-        return;
+function theWinnerIs()
+{
+  if(turns == size ** 2)
+    return "draw";
+  var currentToken;
+  var broke;
+  for(var i = 0; i < board.length; i++)
+  {
+    broke = false;
+    currentToken = board[i][0];
+    if(currentToken == tokens.EMPTY)
+        continue;
+    for(var j = 1; j < board.length; j++)
+    {
+      if(board[i][j] != currentToken){
+        broke = true;
+        break;
       }
-
-      $("#message").text("It's Player's turn!")
+    }
+    if(!broke)
+      return currentToken; // horizontal win
     }
 
-}
-});// all the moves --->AI mode, function ends
-// }
+//---------------------
 
+ for(var i = 0; i < board.length; i++)
+ {
+   broke = false;
+    currentToken = board[0][i];
+    if(currentToken == tokens.EMPTY)
+        continue;
+    for(var j = 1; j < board.length; j++){
+      if(board[j][i] != currentToken){
+        broke = true;
+        break;
+      }
+    }
+
+    if(!broke)
+      return currentToken; // vertical win
+
+  }
+//---------------------
+  broke = false;
+  currentToken = board[0][0];
+  for(var i = 1; i < board.length; i++){
+    if(board[i][i] != currentToken){
+      broke = true;
+      break;
+    }
+  }
+  if(!broke)
+    return currentToken;
+//---------------------
+    broke = false;
+  currentToken = board[size-1][0];
+  for(var i = 1; i < board.length; i++){
+    if(board[size-i-1][i] != currentToken){
+      broke = true;
+      break;
+    }
+  }
+  if(!broke)
+    return currentToken;
+    //---------------------
+  return "noOne";
+}
+
+function setMove(id, token){
+  var location = id.split("");
+  x = parseInt(location[0]) - 1;
+  y = parseInt(location[1]) -1;
+  board[x][y] = token;
+}
 
 
 
@@ -93,12 +104,50 @@ $("td").on("click", function() {
 // ===================all the functions below================================
 
 $(document).ready(function() {
-
+ initializeBoard();
   // load game
 
   window.setTimeout(function () {
     $('#message').removeClass('fadeInUp');
   }, 1000); // remove animation so it won't affect submenu
+
+
+  $("td").on("click", function() {
+    if (isOver) {
+      return;
+    } // if game is ended, clicks become invalid
+
+    var marked = $(this); // get the square that player selects
+
+    // classes x and o
+    if (marked.hasClass(token1) || marked.hasClass(token2)) {
+      // if the square has already been selected then alert else markes the square
+      alert("Please choose another square!")
+      return;
+    }
+
+    // first see which turn
+    if (turns % 2 === 0) {
+      $("#message").text("It's Player's turn!"); // change the prompt message
+      marked.addClass(token1).addClass("animated bounceIn"); // place the token "X"
+      setMove(marked.attr('id'), token1);
+    }
+
+      turns++; //player2's turn
+      isOver = true; // game is ended
+      switch(theWinnerIs()){
+        case tokens.O:
+          $("#message").text("Player wins!");
+          return;
+        case "draw":
+          $("#message").text("It's a draw!");
+          return;
+        default:
+          isOver = false; // game is ended
+        }
+  });// all the moves --->AI mode, function ends
+
+
 
   var restart = function() {
 
@@ -115,67 +164,7 @@ $(document).ready(function() {
 
   //==================================AI mode on======================================
     // all the moves ---> AI mode
-    $("td").on("click", function() {
-      if (isOver) {
-        return;
-      } // if game is ended, clicks become invalid
 
-
-
-      var marked = $(this); // get the square that player selects
-      // classes x and o
-      if (marked.hasClass(token1) || marked.hasClass(token2)) {
-        // if the square has already been selected then alert else markes the square
-        alert("Please choose another square!")
-        return;
-      }
-
-      // first see which turn
-      if (turns % 2 === 0) {
-
-        $("#message").text("It's Player's turn!") // change the prompt message
-
-        marked.addClass(token1).addClass("animated bounceIn"); // place the token "X"
-
-        turns++; //player2's turn
-
-        if (  ) {
-          $("#message").text("Player wins!")
-          isOver = true; // game is ended
-          $("#player1 .num").text('' + );
-
-        } else {
-
-          if ( turns === size ** 2 ) {
-            $("#message").text("It's a draw!")
-            isOver = true;
-            return;
-          } // players reach the last turn and not winning, it's a draw
-          // $("#player2 .name").addClass("changecolor");
-          // $("#player1 .name").removeClass("changecolor"); // change color to indicate current player
-          $("#message").text("It's Player2's turn!")
-          //normally switch to player O and change prompt message
-        }
-
-
-        if ( //computer wins ) {
-          $("#message").text("Computer wins!")
-          isOver = true;
-
-        } else {
-
-          if ( turns === size ** 2 ) {
-            $("#message").text("It's a draw!")
-            isOver = true;
-            return;
-          }
-
-          $("#message").text("It's Player's turn!")
-        }
-
-    }
-  });// all the moves --->AI mode, function ends
-// }
 
 //===========================all the check for WIN functions=============================
 

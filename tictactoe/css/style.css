@@ -3,23 +3,9 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #A53860;
+  background-color: #FFFFFF;
   font-family: 'Raleway', sans-serif;
   text-align: center;
-}
-
-#toggleAI {
-  position: absolute;
-  top: 55px;
-  left: 15px;
-  font-size: 35px;
-  color: #FFEEDB;
-  opacity: 0.5;
-}
-
-#toggleAI:hover {
-  opacity: 1;
-  cursor: pointer;
 }
 
 .container {
@@ -140,13 +126,13 @@ td {
   color: #FFEEDB;
 }
 
-.nigiri {
-  background-image: url("../images/nigiri.png");
+.fu {
+  background-image: url("../images/fu.png");
   background-size: contain;
 }
 
-.onigiri {
-  background-image: url("../images/onigiri.png");
+.student {
+  background-image: url("../images/student.png");
   background-size: contain;
 }
 /*
@@ -156,7 +142,7 @@ td {
 
 #message {
   font-size: 20px;
-  color: #FFEEDB;
+  color: #000000;
   margin-top: 10px;
   z-index: 0 !important;
 }
@@ -178,7 +164,7 @@ td {
 
 .scores p {
   font-size: 20px;
-  color: #FFEEDB;
+  color: #000000;
 }
 
 .scores .num {
