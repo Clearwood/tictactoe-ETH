@@ -9,6 +9,8 @@ contract HighScore {
         bool initialized;
     }
     
+    scores[10] topTen;
+    
     address public owner;
     
     modifier onlyOwner()
@@ -27,6 +29,10 @@ contract HighScore {
     constructor() public 
     {
         owner = msg.sender;
+        
+        for (uint i = 0; i < topTen.length; i++) {
+            topTen[i] = scores(0,0,0,false);
+        }
     }
     
     
@@ -63,13 +69,34 @@ contract HighScore {
         return CurrentScore[msg.sender].losses;
     }
         
-    function setWin() public onlyInitialized
+    function setResult(bool winner) public onlyInitialized
     {
-          CurrentScore[msg.sender].wins = CurrentScore[msg.sender].wins + 1;
-    }
-    
-    function setLosses() public onlyInitialized
-    {
-          CurrentScore[msg.sender].losses = CurrentScore[msg.sender].losses + 1;
+        if(winner) {
+            CurrentScore[msg.sender].wins = CurrentScore[msg.sender].wins + 1;
+        } else {
+            CurrentScore[msg.sender].losses = CurrentScore[msg.sender].losses + 1;
+        }
+          
+        uint pos;
+          
+        if(topTen[0].initialized = false) {
+            topTen[0] = CurrentScore[msg.sender];
+        } else {
+            for (uint i = 0; i < topTen.length; i++) {
+                if((CurrentScore[msg.sender].wins - CurrentScore[msg.sender].losses) 
+                    > (topTen[i].wins - topTen[i].losses)) {
+                    pos = i;
+                    break;
+                }
+            }
+            if(pos < topTen.length) {
+                for (uint i = topTen.length; i > pos; i--) {
+                    topTen[i] = topTen[i - 1];
+                }
+                topTen[pos] = CurrentScore[msg.sender];
+            } else if(pos == topTen.length) {
+                topTen[pos] = CurrentScore[msg.sender];
+            }
+        }
     }
 }
