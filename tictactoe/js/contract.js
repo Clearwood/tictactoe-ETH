@@ -137,8 +137,6 @@ const abi = [
   "type": "constructor"
 }
 ]
-
-
 let iFU = {};
 let address = '';
 async function initETH(){
@@ -150,28 +148,58 @@ async function initETH(){
       abi,
       '0x741f40106a56bCe6Cc6CE87C6fC52B5883fD72ae', {from: address}
     );
+    web3.eth.defaultAccount = web3.eth.accounts[0];
   }
-/*  window.addEventListener('load', () => {
-   // Wait for loading completion to avoid race conditions with web3 injection timing.
-    if (window.ethereum) {
-      const web3 = new Web3(window.ethereum);
-      try {
-        // Request account access if needed
-        ETHawait window.ethereum.enable();
-        // Acccounts now exposed
-        return web3;
-      } catch (error) {
-        console.error(error);
-      }
-      initETH();
-
-   }
+function getName(cb){
+  iFU.methods.getName().call()
+  .then(function(result){
+      cb(web3.toUtf8(result));
+  });
+  }
+function getWins(cb){
+    iFU.methods.getWins().call()
+    .then(function(result){
+        cb(result);
     });
-*/
+    }
+function getLosses(cb){
+        iFU.methods.getLosses().call()
+        .then(function(result){
+            cb(result);
+        });
+        }
+function isInitialized(cb){
+  iFU.methods.isInitialized().call()
+  .then(function(result){
+      cb(result);
+  });
+}
+function setResult(value, cb){
+  iFU.methods.setResult(value).send()
+  .then(function(result){
+      cb(result);
+  });
+}
 $(document).ready(function() {
 initETH();
-web3.eth.defaultAccount = web3.eth.accounts[0];
+
+
 //var FUContract = web3.eth.contract(abi);
 //var TicTac = FUContract.at('0x06cDF0619c9311ca890Fb10a0Aa9EF66eA336a90');
-console.log(iFU.methods.isInitialized().call());
 });
+
+window.onload = (event) => {
+  console.log('page is fully loaded');
+  getName(function(result){
+    $("#player").text(result);
+    player = result;
+  });
+  getWins(function(result){
+    $("#win").text(result);
+    player = result;
+  });
+  getLosses(function(result){
+    $("#loss").text(result);
+    player = result;
+  });
+};
