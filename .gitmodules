@@ -1,0 +1,3 @@
+[submodule "tictactoe"]
+	path = tictactoe
+	url = git@github.com:Clearwood/tictactoe.git
