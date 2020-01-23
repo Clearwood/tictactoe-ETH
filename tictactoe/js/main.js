@@ -1,7 +1,94 @@
-var toggle = false;
 var isOver = false; // see whether game is ended
 var size = 3; //3x3 grid default
 var turns = 0;
+
+
+var board;
+const tokens = {
+  EMPTY: ' ',
+  X: 'X',
+  O: 'O',
+  MINMAX: 'MN'
+}
+
+function intializeBoard(){
+  board = new Array(size);
+  for(var i = 0; i < board.length; i++){
+    board[i] = new Array(size);
+    board[i].fill(tokens.EMPTY);
+  }
+}
+
+
+
+$("td").on("click", function() {
+  if (isOver) {
+    return;
+  } // if game is ended, clicks become invalid
+
+
+
+  var marked = $(this); // get the square that player selects
+  // classes x and o
+  if (marked.hasClass(token1) || marked.hasClass(token2)) {
+    // if the square has already been selected then alert else markes the square
+    alert("Please choose another square!")
+    return;
+  }
+
+  // first see which turn
+  if (turns % 2 === 0) {
+
+    $("#message").text("It's Player's turn!") // change the prompt message
+
+    marked.addClass(token1).addClass("animated bounceIn"); // place the token "X"
+
+    turns++; //player2's turn
+
+    if (  ) {
+      $("#message").text("Player wins!")
+      isOver = true; // game is ended
+      $("#player1 .num").text('' + );
+
+    } else {
+
+      if ( turns === size ** 2 ) {
+        $("#message").text("It's a draw!")
+        isOver = true;
+        return;
+      } // players reach the last turn and not winning, it's a draw
+      // $("#player2 .name").addClass("changecolor");
+      // $("#player1 .name").removeClass("changecolor"); // change color to indicate current player
+      $("#message").text("It's Player2's turn!")
+      //normally switch to player O and change prompt message
+    }
+
+
+    if ( //computer wins ) {
+      $("#message").text("Computer wins!")
+      isOver = true;
+
+    } else {
+
+      if ( turns === size ** 2 ) {
+        $("#message").text("It's a draw!")
+        isOver = true;
+        return;
+      }
+
+      $("#message").text("It's Player's turn!")
+    }
+
+}
+});// all the moves --->AI mode, function ends
+// }
+
+
+
+
+
+
+
 
 // ===================all the functions below================================
 
