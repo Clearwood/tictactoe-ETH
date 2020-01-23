@@ -116,7 +116,7 @@ $(document).ready(function() {
     if (isOver) {
       return;
     } // if game is ended, clicks become invalid
-
+    $("td").unbind("click");
     var marked = $(this); // get the square that player selects
 
     // classes x and o
