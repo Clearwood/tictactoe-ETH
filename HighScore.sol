@@ -2,24 +2,24 @@ pragma solidity >= 0.6.1;
 contract HighScore {
 
     struct scores 
-        {
+    {
         bytes32 name;
         uint256 wins;
         uint256 losses;
         bool initialized;
-     }
+    }
     
     address public owner;
     
     modifier onlyOwner()
     {
-            require(msg.sender == owner);
-            _;
+        require(msg.sender == owner);
+        _;
     }
     
     modifier onlyInitialized() {
-            require(CurrentScore[msg.sender].initialized, "not an initialized user");
-            _;
+        require(CurrentScore[msg.sender].initialized, "not an initialized user");
+        _;
     }
     
     mapping(address => scores) public CurrentScore;
@@ -44,24 +44,24 @@ contract HighScore {
     function close() public onlyOwner 
     { 
     //onlyOwner is custom modifier, "owner" is the owners address
-            selfdestruct(payable(owner));  
-        }
+        selfdestruct(payable(owner));  
+    }
 
     
    function getName() public view onlyInitialized returns (bytes32) 
-        {
-            return CurrentScore[msg.sender].name;
-        }
+    {
+        return CurrentScore[msg.sender].name;
+    }
         
     function getWins() public view onlyInitialized returns (uint256) 
-        {
-            return CurrentScore[msg.sender].wins;
-        }
+    {
+        return CurrentScore[msg.sender].wins;
+    }
         
     function getLosses() public view onlyInitialized returns (uint256) 
-        {
-            return CurrentScore[msg.sender].losses;
-        }
+    {
+        return CurrentScore[msg.sender].losses;
+    }
         
     function setWin() public onlyInitialized
     {
