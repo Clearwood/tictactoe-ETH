@@ -240,7 +240,6 @@ class MiniMax
         if(this.ttt.turns == this.ttt.getSize() ** 2)
             return;
         var bestMove = this.getBestMove(this.ttt.tokenFU, 0);
-        console.log("index minimax chose = " + bestMove);
         return bestMove;
     }  //miniMaxMove()
 
