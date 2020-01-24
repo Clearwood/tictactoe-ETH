@@ -1,17 +1,18 @@
 
 class TicTacToe
 {
-    
     gameOver = false;
     board;
     turns = 0;
     
-    tokens = {
+    tokens = 
+    {
         EMPTY: '_',
         FU: 'fu',
         S: 'student',
         draw: 'draw',
-    }
+    } //tokens
+
     tokenStudent = this.tokens.S;
     tokenFU = this.tokens.FU;
 
@@ -24,7 +25,7 @@ class TicTacToe
             this.board[i] = new Array(this.getSize());
             this.board[i].fill(this.tokens.EMPTY);
         }
-    }
+    }  //constructor()
     
     
     getSize()
@@ -37,7 +38,7 @@ class TicTacToe
     {
         var currentToken;
         var broke;
-        
+
          // horizontal win
         for(var i = 0; i < this.getSize(); i++)
         {
@@ -49,7 +50,8 @@ class TicTacToe
             
             for(var j = 1; j < this.getSize(); j++)
             {
-                if(this.board[i][j] != currentToken){
+                if(this.board[i][j] != currentToken)
+                {
                     broke = true;
                     break;
                 }
@@ -68,8 +70,10 @@ class TicTacToe
             if(currentToken == this.tokens.EMPTY)
                 continue;
 
-            for(var j = 1; j < this.getSize(); j++){
-                if(this.board[j][i] != currentToken){
+            for(var j = 1; j < this.getSize(); j++)
+            {
+                if(this.board[j][i] != currentToken)
+                {
                     broke = true;
                     break;
                 }
@@ -82,8 +86,10 @@ class TicTacToe
         // diagonal win
         broke = false;
         currentToken = this.board[0][0];
-        for(var i = 1; i < this.getSize(); i++){
-            if(this.board[i][i] != currentToken){
+        for(var i = 1; i < this.getSize(); i++)
+        {
+            if(this.board[i][i] != currentToken)
+            {
                 broke = true;
                 break;
             }
@@ -95,8 +101,10 @@ class TicTacToe
         // diagonal win 2
         broke = false;
         currentToken = this.board[this.getSize() - 1][0];
-        for(var i = 1; i < this.getSize(); i++){
-            if(this.board[this.getSize() - i - 1][i] != currentToken){
+        for(var i = 1; i < this.getSize(); i++)
+        {
+            if(this.board[this.getSize() - i - 1][i] != currentToken)
+            {
                 broke = true;
                 break;
             }
@@ -109,7 +117,7 @@ class TicTacToe
             return this.tokens.draw;
         
         return 'continue';
-    }
+    }  //gameWon()
     
     setMove(id, token)
     {
@@ -117,7 +125,7 @@ class TicTacToe
         var x = parseInt(location[0]) - 1;
         var y = parseInt(location[1]) -1;
         this.board[x][y] = token;
-    }
+    }  //setMove()
 
 
     setMoveMiniMax(x, y, token)
@@ -127,8 +135,7 @@ class TicTacToe
 }
 
 
-
-// ===================all the functions below================================
+// ===================================================
 
 $(document).ready(function()
 {
@@ -142,37 +149,36 @@ $(document).ready(function()
 
     $("td").on("click", function()
     {
-         if (ttt.gameOver)
+        if (ttt.gameOver)
             return;
+        
 //                 $("td").unbind("click");
-         var marked = $(this); // get the square that player selects
-        // classes x and o
-         if (marked.hasClass(ttt.tokenStudent) || marked.hasClass(ttt.tokenFU)) {
+        var marked = $(this); // get the square that player selects
+
+        if (marked.hasClass(ttt.tokenStudent) || marked.hasClass(ttt.tokenFU)) 
+        {
          // if the square has already been selected then alert else markes the square
             alert("Please choose another square!")
             return;
-     }
-
-// first see which turn
-         if (ttt.turns % 2 === 0) {
+        }
+            
+        if (ttt.turns % 2 === 0) 
+        {
             $("#message").text("It's MiniMax's turn!"); // change the prompt message
             marked.addClass(ttt.tokenStudent).addClass("animated bounceIn"); // place the token "X"
             ttt.setMove(marked.attr('id'), ttt.tokenStudent);
-            
-         }
-         else
-         {
-               $("#message").text("It's Player's turn!"); // change the prompt message
-               marked.addClass(ttt.tokenFU).addClass("animated bounceIn"); // place the token "X"
-               ttt.setMove(marked.attr('id'), ttt.tokenFU);
+        }
+        else
+        {
+            $("#message").text("It's Player's turn!"); // change the prompt message
+            marked.addClass(ttt.tokenFU).addClass("animated bounceIn"); // place the token "X"
+            ttt.setMove(marked.attr('id'), ttt.tokenFU);
+        }
 
-
-//               marked.addClass(ttt.tokenFU).addClass("animated bounceIn"); // place the token "X"
-//               ttt.setMove(marked.attr('id'), ttt.tokenFU);
-         }
-
-         ttt.turns++; //player2's turn
-         switch(ttt.gameWon()){
+        ttt.turns++;
+        
+        switch(ttt.gameWon())
+        {
             case ttt.tokenStudent:
                 $("#message").text("Player wins!");
                 ttt.gameOver = true; // game is ended
@@ -187,31 +193,21 @@ $(document).ready(function()
                 return;
             default:
         }
-    });// all the moves --->AI mode, function ends
+    });  //onClick()
 
-
-    var restart = function()
-    {
-//        ttt = new TicTacToe();
-    };
 
     $("#restart").on("click", function()
     {
         if(ttt.gameOver)
-                     return;
-         var mm = new MiniMax(ttt, 4);
-         var move = mm.MiniMaxMove();
-         move.printer();
-//         console.table(mm.ttt.board);
-    }); // START button click event, reset game
-
-});
+            return;
+        var mm = new MiniMax(ttt, 4);
+        var move = mm.miniMaxMove();
+        move.printer();
+    });
+});  //ready()
 
 
-
-
-// ===================MiniMax functions================================
-
+// ===================MiniMax class================================
 
 class MiniMax
 {
@@ -223,6 +219,7 @@ class MiniMax
         this.ttt = tttInstance;
         this.maxDepth = maxDepth;
     }
+    
     
     setBoard(x, y, move)
     {
@@ -238,33 +235,28 @@ class MiniMax
     }
     
     
-    MiniMaxMove()
+    miniMaxMove()
     {
         if(this.ttt.turns == this.ttt.getSize() ** 2)
             return;
         var bestMove = this.getBestMove(this.ttt.tokenFU, 0);
         console.log("index minimax chose = " + bestMove);
         return bestMove;
-    }
+    }  //miniMaxMove()
 
     
     getBestMove(token, depth)
     {
-        
         var val = this.ttt.gameWon();  //detirmine who won and return the base case accordingly
         
         if(val == this.ttt.tokenFU)
            return new MoveTyp(-1, -1, 0.1);
         else if (val == this.ttt.tokenStudent)
             return new MoveTyp(-1, -1, -0.1);
-        else if (val == this.ttt.tokens.draw)  //draw
-            return new MoveTyp(-1, -1, 0);
-        
-        if(this.maxDepth == depth)  // max recurion reached
+        else if (val == this.ttt.tokens.draw || this.maxDepth == depth)  // draw or max recurion reached
             return new MoveTyp(-1, -1, 0);
         
         var moves = [];  //store all the moves here and return the move with the highest score
-        
         var currMove;
 
         for(var i = 0; i < this.ttt.getSize(); i++)
@@ -276,7 +268,6 @@ class MiniMax
                     currMove = new MoveTyp(i, j ,0);
                     this.setBoard(i, j, token);
                     
-
                     if(token == this.ttt.tokenFU)  // miniMax's turn
                         currMove.score = this.getBestMove(this.ttt.tokenStudent, depth+1).score;
                     else
@@ -315,7 +306,7 @@ class MiniMax
         }
         return moves[bestMove];
     }
-}
+}  //getBestMove()
 
 
 class MoveTyp
