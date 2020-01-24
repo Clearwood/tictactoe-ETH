@@ -1,106 +1,130 @@
-var isOver = false; // see whether game is ended
-const SIZE = 3; //3x3 grid default
-var turns = 0;
-var token1 = 'student'
-var token2 = 'fu'
-var board;
-var MaxDepth = 2;
 
-const tokens = {
-    EMPTY: 'E',
-    X: 'fu',
-    O: 'student'
-}
-
-function initializeBoard(){
-    board = new Array(SIZE);
-    for(var i = 0; i < SIZE; i++)
-    {
-        board[i] = new Array(SIZE);
-        board[i].fill(tokens.EMPTY);
-    }
-}
-
-
-function theWinnerIs()
+class TicTacToe
 {
-    if(turns == SIZE ** 2)
-        return "draw";
-    var currentToken;
-    var broke;
     
-     // horizontal win
-    for(var i = 0; i < SIZE; i++)
+    gameOver = false;
+    board;
+    turns = 0;
+    
+    tokens = {
+        EMPTY: '_',
+        FU: 'fu',
+        S: 'student',
+        draw: 'draw',
+    }
+    tokenStudent = this.tokens.S;
+    tokenFU = this.tokens.FU;
+
+    
+    constructor()
     {
-        broke = false;
-        currentToken = board[i][0];
-        if(currentToken == tokens.EMPTY)
-            continue;
-        for(var j = 1; j < SIZE; j++)
+        this.board = new Array(this.getSize());
+        for(var i = 0; i < this.getSize(); i++)
         {
-            if(board[i][j] != currentToken){
-                broke = true;
-                break;
-            }
+            this.board[i] = new Array(this.getSize());
+            this.board[i].fill(this.tokens.EMPTY);
         }
-        if(!broke && currentToken != tokens.EMPTY)
-            return currentToken;
     }
-
-     // vertical win
-    for(var i = 0; i < SIZE; i++)
+    
+    
+    getSize()
     {
+        return 3;
+    }
+    
+    
+    gameWon()
+    {
+        var currentToken;
+        var broke;
+        
+         // horizontal win
+        for(var i = 0; i < this.getSize(); i++)
+        {
+            broke = false;
+            currentToken = this.board[i][0];
+
+            if(currentToken == this.tokens.EMPTY)
+                continue;
+            
+            for(var j = 1; j < this.getSize(); j++)
+            {
+                if(this.board[i][j] != currentToken){
+                    broke = true;
+                    break;
+                }
+            }
+            
+            if(!broke && currentToken != this.tokens.EMPTY)
+                return currentToken;
+        }
+
+         // vertical win
+        for(var i = 0; i < this.getSize(); i++)
+        {
+            broke = false;
+            currentToken = this.board[0][i];
+            
+            if(currentToken == this.tokens.EMPTY)
+                continue;
+
+            for(var j = 1; j < this.getSize(); j++){
+                if(this.board[j][i] != currentToken){
+                    broke = true;
+                    break;
+                }
+            }
+
+            if(!broke && currentToken != this.tokens.EMPTY)
+                return currentToken;
+        }
+
+        // diagonal win
         broke = false;
-        currentToken = board[0][i];
-        if(currentToken == tokens.EMPTY)
-            continue;
-        for(var j = 1; j < SIZE; j++){
-            if(board[j][i] != currentToken){
+        currentToken = this.board[0][0];
+        for(var i = 1; i < this.getSize(); i++){
+            if(this.board[i][i] != currentToken){
                 broke = true;
                 break;
             }
         }
-        if(!broke && currentToken != tokens.EMPTY)
+        
+        if(!broke && currentToken != this.tokens.EMPTY)
             return currentToken;
-    }
 
-    // diagonal win
-    broke = false;
-    currentToken = board[0][0];
-    for(var i = 1; i < SIZE; i++){
-        if(board[i][i] != currentToken){
-            broke = true;
-            break;
+        // diagonal win 2
+        broke = false;
+        currentToken = this.board[this.getSize() - 1][0];
+        for(var i = 1; i < this.getSize(); i++){
+            if(this.board[this.getSize() - i - 1][i] != currentToken){
+                broke = true;
+                break;
+            }
         }
+        
+        if(!broke && currentToken != this.tokens.EMPTY)
+            return currentToken;
+
+        if(this.turns == this.getSize() ** 2)
+            return this.tokens.draw;
+        
+        return 'continue';
     }
-    if(!broke && currentToken != tokens.EMPTY)
-        return currentToken;
-
-    // diagonal win 2
-    broke = false;
-    currentToken = board[SIZE - 1][0];
-    for(var i = 1; i < SIZE; i++){
-        if(board[SIZE - i - 1][i] != currentToken){
-            broke = true;
-            break;
-        }
+    
+    setMove(id, token)
+    {
+        var location = id.split("");
+        var x = parseInt(location[0]) - 1;
+        var y = parseInt(location[1]) -1;
+        this.board[x][y] = token;
     }
-    if(!broke && currentToken != tokens.EMPTY)
-        return currentToken;
 
-    return "noOne";
+
+    setMoveMiniMax(x, y, token)
+    {
+        this.board[x][y] = token;
+    }
 }
-
-function setMove(id, token){
-    var location = id.split("");
-    x = parseInt(location[0]) - 1;
-    y = parseInt(location[1]) -1;
-    board[x][y] = token;
-}
-
-
-
-
 
 
 
@@ -108,8 +132,7 @@ function setMove(id, token){
 
 $(document).ready(function()
 {
-    initializeBoard();
-    // load game
+    var ttt = new TicTacToe();
 
     window.setTimeout(function ()
         {
@@ -119,158 +142,197 @@ $(document).ready(function()
 
     $("td").on("click", function()
     {
-         if (isOver)
-            return; // if game is ended, clicks become invalid
-
+         if (ttt.gameOver)
+            return;
 //                 $("td").unbind("click");
          var marked = $(this); // get the square that player selects
         // classes x and o
-         if (marked.hasClass(token1) || marked.hasClass(token2)) {
+         if (marked.hasClass(ttt.tokenStudent) || marked.hasClass(ttt.tokenFU)) {
          // if the square has already been selected then alert else markes the square
             alert("Please choose another square!")
             return;
      }
 
 // first see which turn
-         if (turns % 2 === 0) {
+         if (ttt.turns % 2 === 0) {
             $("#message").text("It's MiniMax's turn!"); // change the prompt message
-            marked.addClass(token1).addClass("animated bounceIn"); // place the token "X"
-            setMove(marked.attr('id'), token1);
+            marked.addClass(ttt.tokenStudent).addClass("animated bounceIn"); // place the token "X"
+            ttt.setMove(marked.attr('id'), ttt.tokenStudent);
             
          }
          else
-               {
+         {
                $("#message").text("It's Player's turn!"); // change the prompt message
-               marked.addClass(token1).addClass("animated bounceIn"); // place the token "X"
-               MiniMaxMove();
-               }
+               marked.addClass(ttt.tokenFU).addClass("animated bounceIn"); // place the token "X"
+               ttt.setMove(marked.attr('id'), ttt.tokenFU);
 
-         turns++; //player2's turn
-         isOver = true; // game is ended
-         switch(theWinnerIs()){
-            case tokens.O:
+
+//               marked.addClass(ttt.tokenFU).addClass("animated bounceIn"); // place the token "X"
+//               ttt.setMove(marked.attr('id'), ttt.tokenFU);
+         }
+
+         ttt.turns++; //player2's turn
+         switch(ttt.gameWon()){
+            case ttt.tokenStudent:
                 $("#message").text("Player wins!");
+                ttt.gameOver = true; // game is ended
+                return;
+            case ttt.tokenFU:
+                $("#message").text("MiniMax wins!");
+                ttt.gameOver = true; // game is ended
                 return;
             case "draw":
                 $("#message").text("It's a draw!");
+                isOver = true; // game is ended
                 return;
             default:
-                isOver = false; // game is ended
         }
     });// all the moves --->AI mode, function ends
 
 
     var restart = function()
     {
-        turns = 0;
-        isOver = false;
-        $("td").removeClass(gameData.token1).removeClass(gameData.token2);
-        $("#message").text("Let's play the game! Player1 first.")
+//        ttt = new TicTacToe();
     };
 
     $("#restart").on("click", function()
     {
-        restart();
- 
+        if(ttt.gameOver)
+                     return;
+         var mm = new MiniMax(ttt, 4);
+         var move = mm.MiniMaxMove();
+         move.printer();
+//         console.table(mm.ttt.board);
     }); // START button click event, reset game
 
 });
+
+
+
+
 // ===================MiniMax functions================================
-                  
 
 
-function setBoard(x, y, move){
-    // index out of range
-    if(x < 0 || y < 0 || x >= SIZE || y >= SIZE)
-        return -1;
-    
-    if(board[x][y] != tokens.EMPTY)
-        return -2;
-    
-    board[x][y] = move;
-    return 1;
-}
-
-function resetMove(i, j)
+class MiniMax
 {
-//    console.log(board+", "+i+", "+ j);
-    board[i][j] = tokens.EMPTY;
+    maxDepth;
+    ttt;
+    
+    constructor(tttInstance, maxDepth)
+    {
+        this.ttt = tttInstance;
+        this.maxDepth = maxDepth;
+    }
+    
+    setBoard(x, y, move)
+    {
+        this.ttt.turns++;
+        this.ttt.board[x][y] = move;
+    }
+    
+    
+    resetBoard(i, j)
+    {
+        this.ttt.turns--;
+        this.ttt.board[i][j] = this.ttt.tokens.EMPTY;
+    }
+    
+    
+    MiniMaxMove()
+    {
+        if(this.ttt.turns == this.ttt.getSize() ** 2)
+            return;
+        var bestMove = this.getBestMove(this.ttt.tokenFU, 0);
+        console.log("index minimax chose = " + bestMove);
+        return bestMove;
+    }
+
+    
+    getBestMove(token, depth)
+    {
+        
+        var val = this.ttt.gameWon();  //detirmine who won and return the base case accordingly
+        
+        if(val == this.ttt.tokenFU)
+           return new MoveTyp(-1, -1, 0.1);
+        else if (val == this.ttt.tokenStudent)
+            return new MoveTyp(-1, -1, -0.1);
+        else if (val == this.ttt.tokens.draw)  //draw
+            return new MoveTyp(-1, -1, 0);
+        
+        if(this.maxDepth == depth)  // max recurion reached
+            return new MoveTyp(-1, -1, 0);
+        
+        var moves = [];  //store all the moves here and return the move with the highest score
+        
+        var currMove;
+
+        for(var i = 0; i < this.ttt.getSize(); i++)
+        {
+            for(var j = 0; j < this.ttt.getSize(); j++)
+            {
+                if(this.ttt.board[i][j] == this.ttt.tokens.EMPTY)
+                {
+                    currMove = new MoveTyp(i, j ,0);
+                    this.setBoard(i, j, token);
+                    
+
+                    if(token == this.ttt.tokenFU)  // miniMax's turn
+                        currMove.score = this.getBestMove(this.ttt.tokenStudent, depth+1).score;
+                    else
+                        currMove.score = this.getBestMove(this.ttt.tokenFU, depth+1).score;
+                    
+                    moves.push(currMove);
+                    this.resetBoard(i, j);  // reset the board
+                }
+            }
+        }
+        
+        var bestMove = 0;
+        if(token == this.ttt.tokenFU)
+        {
+            var bestScore = -(this.ttt.getSize()**2);
+            for(var i = 0; i < moves.length; i++)
+            {
+                if(moves[i].score > bestScore)
+                {
+                    bestMove = i;
+                    bestScore = moves[i].score;
+                }
+            }
+        }
+        else
+        {
+            var bestScore = this.ttt.getSize()**2;
+            for(var i = 0; i < moves.length; i++)
+            {
+                if(moves[i].score < bestScore)
+                {
+                    bestMove = i;
+                    bestScore = moves[i].score;
+                }
+            }
+        }
+        return moves[bestMove];
+    }
 }
-                  
 
 
-
-function MiniMaxMove()
+class MoveTyp
 {
-    if(turns == SIZE ** 2)
-        return;  // game over
-    console.log("gonna start mini");
-    var bestMove = getBestMove(tokens.X, 0);
-    console.log(bestMove);
-//    setBoard(bestMove.x, bestMove.y, tokens.X);
-}
-
-
-
-function getBestMove(token, depth){
+    x;
+    y;
+    score = 0;
     
-    val = theWinnerIs();  //detirmine who won and return the base case accordingly
-    
-    if(val == tokens.X)
-        return {'score': 100};
-    else if (val == tokens.O)
-        return {'score': -100};
-    else if (val == 'draw')  //draw
-        return {'score': 0};
-    
-    if(MaxDepth == depth)  // max recurion reached
-        return {'score': 0};
-    
-    var moves = [];  //store all the moves here and return the move with the highest score
-    
-    for(i = 0; i < SIZE; i++){
-        for(j = 0; j < SIZE; j++){
-            console.log(i+", "+ j);
-            if(board[i][j] == tokens.EMPTY){
-                var currMove = {'x': i, 'y': j, 'score': 0};
-                
-                setBoard(i, j, token);
-
-//                if(token == tokens.X)  // miniMax's turn
-//                    currMove.score = getBestMove(tokens.O, depth+1).score;
-//                else
- //                   currMove.score = getBestMove(tokens.X, depth+1).score;
-                moves.push(currMove);
-                resetMove(i, j);  // reset the board
-            }
-        }
-    }
-    
-    bestMove = 0;
-    if(token == tokens.X)
+    constructor(x, y, score)
     {
-        bestScore = -1000000000;
-        for(i = 0; i < moves.length; i++)
-        {
-            if(moves[i].score > bestScore)
-            {
-                bestMove = i;
-                bestScore = moves[i].score;
-            }
-        }
-    }
-    else
-    {
-        bestScore = 1000000000;
-        for(i = 0; i < moves.length; i++)
-        {
-            if(moves[i].score < bestScore)
-            {
-                bestMove = i;
-                bestScore = moves[i].score;
-            }
-        }
+        this.x = x;
+        this.y = y;
+        this.score = score;
     }
     
-    return moves[bestMove];
+    printer()
+    {
+        console.log("chose: x = "+this.x+", y = "+this.y+", score = "+this.score);
+    }
 }
