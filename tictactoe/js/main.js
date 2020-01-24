@@ -189,7 +189,7 @@ $(document).ready(function()
                 return;
             case "draw":
                 $("#message").text("It's a draw!");
-                isOver = true; // game is ended
+                ttt.gameOver = true; // game is ended
                 return;
             default:
         }
@@ -249,7 +249,7 @@ class MiniMax
         var val = this.ttt.gameWon();  //detirmine who won and return the base case accordingly
         
         if(val == this.ttt.tokenFU)
-           return new MoveTyp(-1, -1, 0.1);
+            return new MoveTyp(-1, -1, 0.1);
         else if (val == this.ttt.tokenStudent)
             return new MoveTyp(-1, -1, -0.1);
         else if (val == this.ttt.tokens.draw || this.maxDepth == depth)  // draw or max recurion reached
@@ -293,7 +293,7 @@ class MiniMax
         }
         else
         {
-            var bestScore = this.ttt.getSize()**2;
+        var bestScore = this.ttt.getSize()**2;
             for(var i = 0; i < moves.length; i++)
             {
                 if(moves[i].score < bestScore)
