@@ -10,7 +10,7 @@ class TicTacToe
         EMPTY: '_',
         FU: 'fu',
         S: 'student',
-        draw: 'draw',
+        DRAW: 'draw',
     } //tokens
 
     tokenStudent = this.tokens.S;
@@ -113,11 +113,32 @@ class TicTacToe
         if(!broke && currentToken != this.tokens.EMPTY)
             return currentToken;
 
-        if(this.turns == this.getSize() ** 2)
-            return this.tokens.draw;
+        if(this.isDraw())
+            return this.tokens.DRAW;
         
         return 'continue';
     }  //gameWon()
+
+
+    isDraw()
+    {
+        return this.turns == this.getSize() ** 2;
+
+    }
+
+
+    isGameOver()
+    {
+    	if(this.gameOver)
+    		return true;
+
+        if(this.gameWon() == 'continue')
+        	return false;
+
+        this.gameOver = true;
+        return true;
+    }
+
     
     setMove(id, token)
     {
@@ -125,13 +146,8 @@ class TicTacToe
         var x = parseInt(location[0]) - 1;
         var y = parseInt(location[1]) -1;
         this.board[x][y] = token;
+        this.turns++;
     }  //setMove()
-
-
-    setMoveMiniMax(x, y, token)
-    {
-        this.board[x][y] = token;
-    }
 }
 
 
@@ -142,17 +158,19 @@ $(document).ready(function()
     var ttt = new TicTacToe();
 
     window.setTimeout(function ()
-        {
+    {
         $('#message').removeClass('fadeInUp');
-        }, 1000); // remove animation so it won't affect submenu
+    }, 1000); // remove animation so it won't affect submenu
 
 
     $("td").on("click", function()
     {
         if (ttt.gameOver)
+        {
+            $("td").unbind("click");
             return;
+        }
         
-//                 $("td").unbind("click");
         var marked = $(this); // get the square that player selects
 
         if (marked.hasClass(ttt.tokenStudent) || marked.hasClass(ttt.tokenFU)) 
@@ -162,20 +180,20 @@ $(document).ready(function()
             return;
         }
             
-        if (ttt.turns % 2 === 0) 
-        {
-            $("#message").text("It's MiniMax's turn!"); // change the prompt message
-            marked.addClass(ttt.tokenStudent).addClass("animated bounceIn"); // place the token "X"
-            ttt.setMove(marked.attr('id'), ttt.tokenStudent);
-        }
-        else
-        {
-            $("#message").text("It's Player's turn!"); // change the prompt message
-            marked.addClass(ttt.tokenFU).addClass("animated bounceIn"); // place the token "X"
-            ttt.setMove(marked.attr('id'), ttt.tokenFU);
-        }
+        $("#message").text("It's MiniMax's turn!"); // change the prompt message
+        marked.addClass(ttt.tokenStudent).addClass("animated bounceIn"); // place the token "X"
+        ttt.setMove(marked.attr('id'), ttt.tokenStudent);
 
-        ttt.turns++;
+        if(!ttt.isDraw())
+    	{
+    		var mm = new MiniMax(ttt, 4);
+	        var move = mm.miniMaxMove();
+	        move.x++;
+	        move.y++;
+	        var id = "" + move.x + move.y;
+    		$("#"+id).addClass(ttt.tokenFU).addClass("animated bounceIn");
+        	ttt.setMove(id, ttt.tokenFU);
+		}
         
         switch(ttt.gameWon())
         {
@@ -187,7 +205,7 @@ $(document).ready(function()
                 $("#message").text("MiniMax wins!");
                 ttt.gameOver = true; // game is ended
                 return;
-            case "draw":
+            case ttt.tokens.DRAW:
                 $("#message").text("It's a draw!");
                 ttt.gameOver = true; // game is ended
                 return;
@@ -237,8 +255,8 @@ class MiniMax
     
     miniMaxMove()
     {
-        if(this.ttt.turns == this.ttt.getSize() ** 2)
-            return;
+        if(this.ttt.isGameOver())
+            return new MoveTyp(-1, -1, 0);
         var bestMove = this.getBestMove(this.ttt.tokenFU, 0);
         return bestMove;
     }  //miniMaxMove()
@@ -252,7 +270,7 @@ class MiniMax
             return new MoveTyp(-1, -1, 0.1);
         else if (val == this.ttt.tokenStudent)
             return new MoveTyp(-1, -1, -0.1);
-        else if (val == this.ttt.tokens.draw || this.maxDepth == depth)  // draw or max recurion reached
+        else if (val == this.ttt.tokens.DRAW || this.maxDepth == depth)  // draw or max recurion reached
             return new MoveTyp(-1, -1, 0);
         
         var moves = [];  //store all the moves here and return the move with the highest score
@@ -303,6 +321,9 @@ class MiniMax
                 }
             }
         }
+        if(moves.length == 0)
+        	return new MoveTyp(-1, -1, 0);
+
         return moves[bestMove];
     }
 }  //getBestMove()
