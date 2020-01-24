@@ -180,7 +180,7 @@ $(document).ready(function()
             return;
         }
             
-        $("#message").text("It's MiniMax's turn!"); // change the prompt message
+        $("#message").text("It's your turn!"); // change the prompt message
         marked.addClass(ttt.tokenStudent).addClass("animated bounceIn"); // place the token "X"
         ttt.setMove(marked.attr('id'), ttt.tokenStudent);
 
@@ -216,11 +216,6 @@ $(document).ready(function()
 
     $("#restart").on("click", function()
     {
-        if(ttt.gameOver)
-            return;
-        var mm = new MiniMax(ttt, 4);
-        var move = mm.miniMaxMove();
-        move.printer();
     });
 });  //ready()
 
