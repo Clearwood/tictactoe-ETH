@@ -219,13 +219,8 @@ $(document).ready(function()
 
     $("#restart").on("click", function()
     {
-        ttt.turns = 0;
         $("#message").text("Player begins");
-        for(var i = 0; i < ttt.getSize(); i++)
-        {
-            ttt.board[i].fill(ttt.tokens.EMPTY);
-        }
-        ttt.gameOver = false;
+        ttt = new TicTacToe();
         $("td").removeClass(ttt.tokenFU).removeClass(ttt.tokenStudent);
         $("td").bind("click");
     });
