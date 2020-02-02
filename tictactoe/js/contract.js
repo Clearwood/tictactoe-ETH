@@ -182,7 +182,7 @@ function setResult(value, cb){
 }
 
 function setInitialize(name,cb){
-  iFU.methods.initialize(name).send()
+  iFU.methods.initialize(web3.toHex(name)).send()
   .then(function(result){
       cb(result);
   });
@@ -217,21 +217,19 @@ window.onload = (event) => {
       initializePlayer();
     } else {
       $("#myModal").toggle();
-      $("#modalBtn").click(function(x){
+      $("#submit").click(function(x){
         setInitialize($("#nick").val());
-        $("#modalForm").hide();
-        $("#myModal").text("Waiting for Initialization.");
-        var id = setInterval(function(){
+        $(".modal-content").text("Waiting for Initialization.");
+        var intId = setInterval(function(){
           isInitialized(function(x){
             if(x){
           initializePlayer();
           $("#myModal").toggle();
+          clearInterval(intId);
         }
-      }
-        }
+      });
       }, 1000);
-      event.preventDefault();
-      })
+    });
     }
   })
 };
