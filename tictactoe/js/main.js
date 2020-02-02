@@ -260,7 +260,6 @@ class MiniMax
     getBestMove(token, depth)
     {
         var val = this.ttt.gameWon();  //detirmine who won and return the base case accordingly
-        console.log(val + ", " + depth);
         
         if(val == this.ttt.tokenFU)
             return new MoveTyp(-1, -1, 0.1);
