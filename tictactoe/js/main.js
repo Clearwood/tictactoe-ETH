@@ -183,10 +183,10 @@ $(document).ready(function()
         $("#message").text("It's your turn!"); // change the prompt message
         marked.addClass(ttt.tokenStudent).addClass("animated bounceIn"); // place the token "X"
         ttt.setMove(marked.attr('id'), ttt.tokenStudent);
-
-        if(!ttt.isDraw())
+               
+        if(!ttt.isGameOver())
     	{
-    		var mm = new MiniMax(ttt, 4);
+    		var mm = new MiniMax(ttt, 3);
 	        var move = mm.miniMaxMove();
 	        move.x++;
 	        move.y++;
@@ -260,6 +260,7 @@ class MiniMax
     getBestMove(token, depth)
     {
         var val = this.ttt.gameWon();  //detirmine who won and return the base case accordingly
+        console.log(val + ", " + depth);
         
         if(val == this.ttt.tokenFU)
             return new MoveTyp(-1, -1, 0.1);
