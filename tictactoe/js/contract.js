@@ -180,6 +180,13 @@ function setResult(value, cb){
       cb(result);
   });
 }
+
+function setInitialize(name,cb){
+  iFU.methods.initialize(name).send()
+  .then(function(result){
+      cb(result);
+  });
+}
 $(document).ready(function() {
 initETH();
 
@@ -188,8 +195,7 @@ initETH();
 //var TicTac = FUContract.at('0x06cDF0619c9311ca890Fb10a0Aa9EF66eA336a90');
 });
 
-window.onload = (event) => {
-  console.log('page is fully loaded');
+function initializePlayer(){
   getName(function(result){
     $("#player").text(result);
   });
@@ -202,4 +208,30 @@ window.onload = (event) => {
     $("#loss").text(result);
   });
 }, 5000);
+}
+
+window.onload = (event) => {
+  console.log('page is fully loaded');
+  isInitialized(function(x){
+    if(x){
+      initializePlayer();
+    } else {
+      $("#myModal").toggle();
+      $("#modalBtn").click(function(x){
+        setInitialize($("#nick").val());
+        $("#modalForm").hide();
+        $("#myModal").text("Waiting for Initialization.");
+        var id = setInterval(function(){
+          isInitialized(function(x){
+            if(x){
+          initializePlayer();
+          $("#myModal").toggle();
+        }
+      }
+        }
+      }, 1000);
+      event.preventDefault();
+      })
+    }
+  })
 };
