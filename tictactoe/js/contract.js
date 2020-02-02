@@ -192,14 +192,14 @@ window.onload = (event) => {
   console.log('page is fully loaded');
   getName(function(result){
     $("#player").text(result);
-    player = result;
   });
+  setInterval(function(){
+  console.log("interval reached");
   getWins(function(result){
     $("#win").text(result);
-    player = result;
   });
   getLosses(function(result){
     $("#loss").text(result);
-    player = result;
   });
+}, 5000);
 };
