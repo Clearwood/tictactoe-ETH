@@ -184,10 +184,10 @@ $(document).ready(function()
         $("#message").text("It's your turn!"); // change the prompt message
         marked.addClass(ttt.tokenStudent).addClass("animated bounceIn"); // place the token "X"
         ttt.setMove(marked.attr('id'), ttt.tokenStudent);
-
-        if(!ttt.isDraw())
+               
+        if(!ttt.isGameOver())
     	{
-    		var mm = new MiniMax(ttt, 4);
+    		var mm = new MiniMax(ttt, 3);
 	        var move = mm.miniMaxMove();
 	        move.x++;
 	        move.y++;
