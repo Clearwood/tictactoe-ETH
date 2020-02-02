@@ -219,6 +219,7 @@ $(document).ready(function()
 
     $("#restart").on("click", function()
     {
+        ttt.turns = 0;
         $("#message").text("Player begins");
         for(var i = 0; i < ttt.getSize(); i++)
         {
@@ -226,6 +227,7 @@ $(document).ready(function()
         }
         ttt.gameOver = false;
         $("td").removeClass(ttt.tokenFU).removeClass(ttt.tokenStudent);
+        $("td").bind("click");
     });
 });  //ready()
 
