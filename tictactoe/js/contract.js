@@ -138,6 +138,8 @@ const abi = [
 }
 ]
 let iFU = {};
+let cFU = {};
+const web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/v3/e828d17619ef4075a3a0d824e16712b0"))
 let address = '';
 async function initETH(){
     const injectedProvider = window.ethereum;
@@ -148,28 +150,32 @@ async function initETH(){
       abi,
       '0x741f40106a56bCe6Cc6CE87C6fC52B5883fD72ae', {from: address}
     );
+    cFU = new iWeb3.eth.Contract(
+      abi,
+      '0x741f40106a56bCe6Cc6CE87C6fC52B5883fD72ae', {from: address}
+    );
     web3.eth.defaultAccount = web3.eth.accounts[0];
   }
 function getName(cb){
-  iFU.methods.getName().call()
+  cFU.methods.getName().call()
   .then(function(result){
-      cb(web3.toUtf8(result));
+      cb(web3.utils.toUtf8(result));
   });
   }
 function getWins(cb){
-    iFU.methods.getWins().call()
+    cFU.methods.getWins().call()
     .then(function(result){
         cb(result);
     });
     }
 function getLosses(cb){
-        iFU.methods.getLosses().call()
+        cFU.methods.getLosses().call()
         .then(function(result){
             cb(result);
         });
         }
 function isInitialized(cb){
-  iFU.methods.isInitialized().call()
+  cFU.methods.isInitialized().call()
   .then(function(result){
       cb(result);
   });
@@ -182,7 +188,7 @@ function setResult(value, cb){
 }
 
 function setInitialize(name,cb){
-  iFU.methods.initialize(web3.toHex(name)).send()
+  iFU.methods.initialize(web3.utils.toHex(name)).send()
   .then(function(result){
       cb(result);
   });
@@ -199,15 +205,16 @@ function initializePlayer(){
   getName(function(result){
     $("#player").text(result);
   });
-  setInterval(function(){
-  console.log("interval reached");
-  getWins(function(result){
-    $("#win").text(result);
-  });
-  getLosses(function(result){
-    $("#loss").text(result);
-  });
-}, 5000);
+  (function foo() {
+    console.log("interval reached");
+    getWins(function(result){
+      $("#win").text(result);
+    });
+    getLosses(function(result){
+      $("#loss").text(result);
+    });
+    setTimeout(foo, 5000);
+  })();
 }
 
 window.onload = (event) => {
