@@ -193,32 +193,8 @@ function setInitialize(name,cb){
       cb(result);
   });
 }
-$(document).ready(function() {
-initETH();
 
-
-//var FUContract = web3.eth.contract(abi);
-//var TicTac = FUContract.at('0x06cDF0619c9311ca890Fb10a0Aa9EF66eA336a90');
-});
-
-function initializePlayer(){
-  getName(function(result){
-    $("#player").text(result);
-  });
-  (function foo() {
-    console.log("interval reached");
-    getWins(function(result){
-      $("#win").text(result);
-    });
-    getLosses(function(result){
-      $("#loss").text(result);
-    });
-    setTimeout(foo, 5000);
-  })();
-}
-
-window.onload = (event) => {
-  console.log('page is fully loaded');
+function InitCheck(){
   isInitialized(function(x){
     if(x){
       initializePlayer();
@@ -239,4 +215,27 @@ window.onload = (event) => {
     });
     }
   })
-};
+}
+
+$(document).ready(function() {
+initETH().then(InitCheck);
+
+//var FUContract = web3.eth.contract(abi);
+//var TicTac = FUContract.at('0x06cDF0619c9311ca890Fb10a0Aa9EF66eA336a90');
+});
+
+function initializePlayer(){
+  getName(function(result){
+    $("#player").text(result);
+  });
+  (function foo() {
+    console.log("interval reached");
+    getWins(function(result){
+      $("#win").text(result);
+    });
+    getLosses(function(result){
+      $("#loss").text(result);
+    });
+    setTimeout(foo, 5000);
+  })();
+}
