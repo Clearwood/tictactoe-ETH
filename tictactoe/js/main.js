@@ -200,12 +200,12 @@ $(document).ready(function()
         {
             case ttt.tokenStudent:
                 $("#message").text("Player wins!");
-                setResult(true, function(x){console.log(x)});
+                setResult(true);
                 ttt.gameOver = true; // game is ended
                 return;
             case ttt.tokenFU:
                 $("#message").text("MiniMax wins!");
-                setResult(false, function(x){console.log(x)});
+                setResult(false);
                 ttt.gameOver = true; // game is ended
                 return;
             case ttt.tokens.DRAW:

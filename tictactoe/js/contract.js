@@ -1,146 +1,10 @@
-const abi = [
-{
-  "inputs": [],
-  "name": "close",
-  "outputs": [],
-  "stateMutability": "nonpayable",
-  "type": "function"
-},
-{
-  "inputs": [
-    {
-      "internalType": "address",
-      "name": "",
-      "type": "address"
-    }
-  ],
-  "name": "CurrentScore",
-  "outputs": [
-    {
-      "internalType": "bytes32",
-      "name": "name",
-      "type": "bytes32"
-    },
-    {
-      "internalType": "uint256",
-      "name": "wins",
-      "type": "uint256"
-    },
-    {
-      "internalType": "uint256",
-      "name": "losses",
-      "type": "uint256"
-    },
-    {
-      "internalType": "bool",
-      "name": "initialized",
-      "type": "bool"
-    }
-  ],
-  "stateMutability": "view",
-  "type": "function"
-},
-{
-  "inputs": [],
-  "name": "getLosses",
-  "outputs": [
-    {
-      "internalType": "uint256",
-      "name": "",
-      "type": "uint256"
-    }
-  ],
-  "stateMutability": "view",
-  "type": "function"
-},
-{
-  "inputs": [],
-  "name": "getName",
-  "outputs": [
-    {
-      "internalType": "bytes32",
-      "name": "",
-      "type": "bytes32"
-    }
-  ],
-  "stateMutability": "view",
-  "type": "function"
-},
-{
-  "inputs": [],
-  "name": "getWins",
-  "outputs": [
-    {
-      "internalType": "uint256",
-      "name": "",
-      "type": "uint256"
-    }
-  ],
-  "stateMutability": "view",
-  "type": "function"
-},
-{
-  "inputs": [
-    {
-      "internalType": "bytes32",
-      "name": "_name",
-      "type": "bytes32"
-    }
-  ],
-  "name": "initialize",
-  "outputs": [],
-  "stateMutability": "nonpayable",
-  "type": "function"
-},
-{
-  "inputs": [],
-  "name": "isInitialized",
-  "outputs": [
-    {
-      "internalType": "bool",
-      "name": "initialized",
-      "type": "bool"
-    }
-  ],
-  "stateMutability": "view",
-  "type": "function"
-},
-{
-  "inputs": [],
-  "name": "owner",
-  "outputs": [
-    {
-      "internalType": "address",
-      "name": "",
-      "type": "address"
-    }
-  ],
-  "stateMutability": "view",
-  "type": "function"
-},
-{
-  "inputs": [
-    {
-      "internalType": "bool",
-      "name": "winner",
-      "type": "bool"
-    }
-  ],
-  "name": "setResult",
-  "outputs": [],
-  "stateMutability": "nonpayable",
-  "type": "function"
-},
-{
-  "inputs": [],
-  "stateMutability": "nonpayable",
-  "type": "constructor"
-}
-]
 let iFU = {};
 let cFU = {};
+//setting HTTP web3 provider for faster get calls
 const web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/v3/e828d17619ef4075a3a0d824e16712b0"))
 let address = '';
+//initializing web3 providers and getting addresses
+//0x741f40106a56bCe6Cc6CE87C6fC52B5883fD72ae is the address of the deployed contract
 async function initETH(){
     const injectedProvider = window.ethereum;
     const addresses = await injectedProvider.enable();
@@ -156,44 +20,72 @@ async function initETH(){
     );
     web3.eth.defaultAccount = web3.eth.accounts[0];
   }
+
+//getting name variable and converting to utf8
 function getName(cb){
   cFU.methods.getName().call()
   .then(function(result){
       cb(web3.utils.toUtf8(result));
   });
   }
+
+//getting the number of Wins
 function getWins(cb){
     cFU.methods.getWins().call()
     .then(function(result){
         cb(result);
     });
     }
+//getting the number of losses
 function getLosses(cb){
         cFU.methods.getLosses().call()
         .then(function(result){
             cb(result);
         });
         }
+
+//checking if user is initialized
 function isInitialized(cb){
   cFU.methods.isInitialized().call()
   .then(function(result){
       cb(result);
   });
 }
-function setResult(value, cb){
+
+//writing results in scoreboard
+function writeResults(value, initial = false){
+  if(initial || value){
+    getWins(function(result){
+      $("#win").text(result);
+    });
+  }
+  if(initial || !value){
+    getLosses(function(result){
+      $("#loss").text(result);
+    });
+  }
+}
+
+//setting win or loss preparing interactive transaction
+function setResult(value){
   iFU.methods.setResult(value).send()
   .then(function(result){
-      cb(result);
+      console.log(result);
+      writeResults(value);
   });
 }
 
-function setInitialize(name,cb){
-  iFU.methods.initialize(web3.utils.toHex(name)).send()
+//preparing interactive transaction to initalize user as well as closing modal after completion
+function setInitialize(name){
+  iFU.methods.initialize(web3.utils.utf8ToHex(name)).send()
   .then(function(result){
-      cb(result);
+    console.log(result);
+    initializePlayer();
+    $("#myModal").toggle();
   });
 }
 
+//checking if user is initialized and loading data otherwise opening modal to let the user input a nickname
 function InitCheck(){
   isInitialized(function(x){
     if(x){
@@ -203,39 +95,20 @@ function InitCheck(){
       $("#submit").click(function(x){
         setInitialize($("#nick").val());
         $(".modal-content").text("Waiting for Initialization.");
-        var intId = setInterval(function(){
-          isInitialized(function(x){
-            if(x){
-          initializePlayer();
-          $("#myModal").toggle();
-          clearInterval(intId);
-        }
-      });
-      }, 1000);
     });
     }
   })
 }
 
+//loading the initialization function on page load
 $(document).ready(function() {
 initETH().then(InitCheck);
-
-//var FUContract = web3.eth.contract(abi);
-//var TicTac = FUContract.at('0x06cDF0619c9311ca890Fb10a0Aa9EF66eA336a90');
 });
 
+//initalizing players result as well as nickname
 function initializePlayer(){
   getName(function(result){
     $("#player").text(result);
   });
-  (function foo() {
-    console.log("interval reached");
-    getWins(function(result){
-      $("#win").text(result);
-    });
-    getLosses(function(result){
-      $("#loss").text(result);
-    });
-    setTimeout(foo, 5000);
-  })();
+  writeResults(undefined, true);
 }
