@@ -221,7 +221,7 @@ $(document).ready(function()
     {
         $("#message").text("Player begins");
         ttt = new TicTacToe();
-        $("td").removeClass(ttt.tokenFU).removeClass(ttt.tokenStudent);
+        $("td").removeClass(ttt.tokenFU).removeClass(ttt.tokenStudent).removeClass("animated bounceIn");
         $("td").bind("click");
     });
 });  //ready()
