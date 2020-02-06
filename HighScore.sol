@@ -76,7 +76,7 @@ contract HighScore {
         } else {
             CurrentScore[msg.sender].losses = CurrentScore[msg.sender].losses + 1;
         }
-        
+        /*
         uint pos;
 
         if(topTen[0].initialized = false) {
@@ -98,5 +98,6 @@ contract HighScore {
                 topTen[pos] = CurrentScore[msg.sender];
             }
         }
+        */
     }
 }
