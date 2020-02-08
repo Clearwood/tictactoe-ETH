@@ -1,4 +1,7 @@
 # ETH_TTT
+
+Developed by [Lena Zander](https://github.com/zettel), [Othman Watad](https://github.com/othman18) and Keno Budde
+
 # Tic Tac Toe
 
 - used [animate.css](https://github.com/daneden/animate.css) library during the process, it's an easy-to-use library of CSS animations!
@@ -7,7 +10,7 @@
 
 - the graphic design is based on https://github.com/unicar9/tictactoe
 
-- we used a minimax decision based AI as well as web3.js for the Blockchain integration
+- we used a minimax decision based AI as well as [web3.js](https://web3js.readthedocs.io/en/v1.2.6/) for the Blockchain integration
 
 # Play the game
 
